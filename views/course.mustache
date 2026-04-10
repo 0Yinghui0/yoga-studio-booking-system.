@@ -1,0 +1,206 @@
+{{> head}}
+{{> header}}
+
+<div class="wrap" style="margin-top: 40px; margin-bottom: 50px;">
+  <article class="card" style="padding: 40px;">
+    
+    <a href="/courses" style="display: inline-block; margin-bottom: 20px; color: #64748b; text-decoration: none; font-weight: 600; font-size: 0.95em; transition: color 0.2s ease;" onmouseover="this.style.color='var(--dark-blue)'" onmouseout="this.style.color='#64748b'">
+      &larr; Back to Courses
+    </a>
+    
+    <h1 style="margin-top: 0; font-size: 2.2em; color: var(--dark-blue);">{{course.title}}</h1>
+    
+<div style="background-color: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 30px; margin-top: 20px;">
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+        
+        <div style="flex: 1; min-width: 250px;">
+          <h3 style="margin-top: 0; color: var(--dark-blue); font-size: 1.2em; text-transform: uppercase; letter-spacing: 0.5px;">Course Details</h3>
+          <p style="margin: 8px 0; color: var(--ink); font-size: 1.05em;"><strong style="color: var(--muted);">Location:</strong> {{course.location}}</p>
+          <p style="margin: 8px 0; color: var(--ink); font-size: 1.05em;"><strong style="color: var(--muted);">Level:</strong> <span style="text-transform: capitalize;">{{course.level}}</span></p>
+          <p style="margin: 8px 0; color: var(--ink); font-size: 1.05em;"><strong style="color: var(--muted);">Format:</strong> <span style="text-transform: capitalize;">{{course.type}}</span> {{#course.allowDropIn}}<span style="color: #10b981; font-weight: bold; font-size: 0.85em; margin-left: 5px; background: #d1fae5; padding: 2px 6px; border-radius: 4px;">Drop-in Available</span>{{/course.allowDropIn}}</p>
+          <p style="margin: 8px 0; color: var(--ink); font-size: 1.05em;"><strong style="color: var(--muted);">Dates:</strong> {{course.startDate}} – {{course.endDate}}</p>
+        </div>
+
+        <div style="flex: 1; min-width: 200px; background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+          <h3 style="margin-top: 0; color: var(--dark-blue); font-size: 1.2em; border-bottom: 1px solid var(--line); padding-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Pricing</h3>
+          <p style="margin: 12px 0 5px 0; font-size: 1.15em;"><strong>Full Course:</strong> £{{course.price}}</p>
+          <p style="margin: 0; color: var(--muted); font-size: 0.95em;"><strong>Individual Sessions:</strong> See table below</p>
+        </div>
+
+      </div>
+
+      <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+        <h3 style="margin-top: 0; color: var(--dark-blue); font-size: 1.1em; text-transform: uppercase; letter-spacing: 0.5px;">About this course</h3>
+        <p style="line-height: 1.6; color: var(--ink); margin-bottom: 0; font-size: 1.05em;">{{course.description}}</p>
+      </div>
+    </div>
+
+<section style="margin-top: 40px;">
+
+      {{#user}}
+        {{#hasBookedFullCourse}}
+          <button type="button" class="btn" style="background-color: #94a3b8; cursor: not-allowed; font-size: 1.2em; padding: 15px 30px; color: white;" disabled>
+            Already Booked
+          </button>
+        {{/hasBookedFullCourse}}
+
+        {{^hasBookedFullCourse}}
+          <form id="bookFullCourseForm" action="/courses/{{course.id}}/book" method="POST" style="margin: 0;">
+            <button type="button" class="btn primary" style="font-size: 1.2em; padding: 15px 30px;" onclick="openConfirmationModal('bookingModal', 'bookFullCourseForm', 'Are you sure you want to book this entire course?')">Book full course</button>
+          </form>
+        {{/hasBookedFullCourse}}
+      {{/user}}
+
+      {{^user}}
+        <p style="background-color: #f8fafc; border: 1px solid var(--line); color: var(--muted); padding: 15px; border-radius: 6px; display: inline-block; margin: 0;">
+          You must be logged in to book this course. <a href="/auth/login" style="color: var(--primary-blue); font-weight: bold; text-decoration: underline;">Log in here</a>.
+        </p>
+      {{/user}}
+    </section>
+
+<section style="margin-top: 40px;">
+      <h2 style="color: var(--dark-blue);">Sessions</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Start</th><th>End</th><th>Capacity</th><th>Price</th><th>Booked</th><th>Remaining</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#sessions}}
+          <tr>
+            <td>{{start}}</td><td>{{end}}</td><td>{{capacity}}</td>
+            <td style="font-weight: bold; color: var(--dark-blue);">£{{price}}</td>
+            <td>{{booked}}</td><td>{{remaining}}</td>
+            <td style="text-align: right;">
+              {{#user}}
+                
+                {{#isBooked}}
+                  <button type="button" class="btn" style="background-color: #94a3b8; cursor: not-allowed; color: white;" disabled>
+                    Already Booked
+                  </button>
+                {{/isBooked}}
+
+                {{^isBooked}}
+                  <form id="bookSessionForm_{{id}}" action="/sessions/{{id}}/book" method="POST" style="margin: 0;">
+                    <button type="button" class="btn primary" {{#isFull}}disabled style="background-color: #cbd5e1; cursor: not-allowed;"{{/isFull}} onclick="openConfirmationModal('bookingModal', 'bookSessionForm_{{id}}', 'Are you sure you want to book this specific session?')">
+                      {{#isFull}}Full{{/isFull}}{{^isFull}}Book session{{/isFull}}
+                    </button>
+                  </form>
+                {{/isBooked}}
+
+              {{/user}}
+              {{^user}}
+                <span class="muted"><a href="/auth/login" style="color: var(--primary-blue); font-weight: bold;">Log in</a> to book</span>
+              {{/user}}
+            </td>
+          </tr>
+          {{/sessions}}
+        {{^sessions}}
+          <tr>
+            <td colspan="6" style="padding: 0; border: none;">
+              <div style="text-align: center; padding: 40px; background-color: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; margin-top: 20px;">
+                <div style="font-size: 2em; margin-bottom: 10px;">📅</div>
+                <h3 style="color: var(--dark-blue); margin-top: 0;">No Upcoming Sessions</h3>
+                <p style="color: var(--muted); margin-bottom: 0;">The organiser hasn't scheduled any individual classes for this course yet. Check back soon!</p>
+              </div>
+            </td>
+          </tr>
+          {{/sessions}}
+        </tbody>
+      </table>
+    </section>
+  </article>
+</div>
+
+<style>
+  .custom-modal {
+    display: none; 
+    position: fixed; 
+    z-index: 9999; 
+    left: 0;
+    top: 0;
+    width: 100vw; 
+    height: 100vh; 
+    background-color: rgba(0,0,0,0.6); 
+  }
+
+  .custom-modal-content {
+    background-color: var(--card-bg);
+    position: fixed; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 420px; 
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+    overflow: hidden; 
+    border: 1px solid var(--line);
+  }
+
+  .custom-modal-header {
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+    padding: 15px 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+    border-bottom: 1px solid rgba(13, 71, 161, 0.1);
+  }
+
+  .custom-modal-body {
+    padding: 25px 20px;
+    color: var(--ink);
+    line-height: 1.6;
+    text-align: center;
+    font-size: 1.05em;
+  }
+
+  .custom-modal-footer {
+    padding: 15px 20px;
+    background-color: #f8fafc;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+</style>
+
+<div id="bookingModal" class="custom-modal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      Booking Confirmation
+    </div>
+    <div class="custom-modal-body">
+      <p id="modalMessage" style="margin: 0;">Are you sure you want to continue?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="btn" style="background-color: #64748b; color: white;" onclick="closeModal('bookingModal')">Cancel</button>
+      <button type="button" class="btn primary" style="background-color: var(--dark-blue);" id="modalConfirmButton">Confirm Booking</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let formToSubmit = null;
+
+  function openConfirmationModal(modalId, formId, message) {
+    formToSubmit = document.getElementById(formId);
+    document.getElementById('modalMessage').innerText = message;
+    
+    document.getElementById('modalConfirmButton').onclick = function() {
+      if (formToSubmit) {
+        formToSubmit.submit();
+      }
+    };
+    
+    document.getElementById(modalId).style.display = "block";
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+    formToSubmit = null;
+  }
+</script>
+
+{{> footer}}

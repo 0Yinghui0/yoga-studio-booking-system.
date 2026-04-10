@@ -1,0 +1,47 @@
+{{> head}}
+{{> header}}
+
+<div class="wrap" style="margin-top: 50px; margin-bottom: 50px; max-width: 600px;">
+  <article class="card" style="padding: 40px; text-align: center;">
+    
+    <div style="font-size: 3.5em; margin-bottom: 10px;">✅</div>
+    <h1 style="color: var(--dark-blue); margin-top: 0;">Booking Confirmed!</h1>
+    <p class="muted" style="font-size: 1.1em;">You are all set for your practice.</p>
+
+    <div style="background-color: var(--bg); padding: 25px; border-radius: 8px; text-align: left; margin: 30px 0; border: 1px solid var(--line);">
+      
+      <p style="margin: 0 0 12px 0; font-size: 1.15em;">
+        <strong style="color: var(--dark-blue);">Course:</strong> 
+        {{booking.courseName}}
+      </p>
+
+      <p style="margin: 0 0 12px 0; font-size: 1.05em;">
+        <strong style="color: var(--dark-blue);">Type:</strong> 
+        {{booking.type}}
+      </p>
+      
+      <p style="margin: 0 0 12px 0; font-size: 1.05em;">
+        <strong style="color: var(--dark-blue);">Status:</strong> 
+        <span style="color: #10b981; font-weight: bold; background-color: #d1fae5; padding: 4px 10px; border-radius: 4px;">{{booking.status}}</span>
+      </p>
+
+      <p style="margin: 0 0 12px 0; font-size: 0.95em;">
+        <strong style="color: var(--dark-blue);">Booking ID:</strong> 
+        <span style="font-family: monospace; color: var(--muted); background: white; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">{{booking.id}}</span>
+      </p>
+
+      <p style="margin: 0; color: var(--muted); font-size: 0.9em; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05);">
+        <strong>Created:</strong> {{booking.createdAt}}
+      </p>
+
+    </div>
+
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+      <a href="/bookings/dashboard" class="btn primary" style="padding: 12px 25px; min-width: 180px;">My Dashboard</a>
+      <a href="/courses" class="btn" style="background-color: #f1f5f9; color: var(--dark-blue) !important; padding: 12px 25px; min-width: 180px; text-decoration: none; border-radius: 6px; font-weight: bold;">Browse More</a>
+    </div>
+
+  </article>
+</div>
+
+{{> footer}}

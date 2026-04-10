@@ -1,0 +1,92 @@
+{{> head}}
+{{> header}}
+
+<div class="wrap" style="margin-top: 40px; margin-bottom: 50px;">
+  <article class="card" style="padding: 40px;">
+    
+    <a href="/organiser" style="display: inline-block; margin-bottom: 20px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.95em; transition: color 0.2s ease;">
+      &larr; Back to Dashboard
+    </a>
+
+    <h1 style="margin-top: 0; color: var(--dark-blue);">Manage Users & Staff</h1>
+    <p class="muted">View all registered users and staff members below.</p>
+
+    <div style="background-color: var(--light-blue); padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid var(--line);">
+      <strong style="color: var(--dark-blue); display: block; margin-bottom: 5px;">Need to add a new Organiser?</strong>
+      <span style="color: var(--ink);">Use the <a href="/auth/register" style="color: var(--primary-blue); font-weight: bold; text-decoration: underline;">registration form</a> and select "Studio Organiser" as the role.</span>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#users}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{email}}</td>
+          <td>
+            <span style="background-color: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 0.85em; color: var(--muted); border: 1px solid var(--line);">{{role}}</span>
+          </td>
+          <td style="text-align: right;">
+            <form id="deleteUserForm_{{_id}}" action="/organiser/users/delete/{{_id}}" method="POST" style="margin: 0;">
+              <button type="button" class="btn btn-danger" onclick="openConfirmationModal('deleteModal', 'deleteUserForm_{{_id}}', 'Are you sure you want to permanently delete {{name}}?')">Remove User</button>
+            </form>
+          </td>
+        </tr>
+        {{/users}}
+
+        {{^users}}
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 20px;" class="muted">No users found.</td>
+        </tr>
+        {{/users}}
+      </tbody>
+    </table>
+
+  </article>
+</div>
+
+<style>
+  .custom-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.6); }
+  .custom-modal-content { background-color: var(--card-bg); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 420px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid var(--line); }
+  .custom-modal-header { background-color: #fee2e2; color: #b91c1c; padding: 15px 20px; font-weight: bold; font-size: 1.1em; border-bottom: 1px solid #fecaca; }
+  .custom-modal-body { padding: 25px 20px; color: var(--ink); line-height: 1.6; text-align: center; font-size: 1.05em; }
+  .custom-modal-footer { padding: 15px 20px; background-color: #f8fafc; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 12px; }
+</style>
+
+<div id="deleteModal" class="custom-modal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">Delete User</div>
+    <div class="custom-modal-body">
+      <p id="modalMessage" style="margin: 0;">Are you sure?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="btn" style="background-color: #64748b;" onclick="closeModal('deleteModal')">Cancel</button>
+      <button type="button" class="btn btn-danger" id="modalConfirmButton">Delete Permanently</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let formToSubmit = null;
+  function openConfirmationModal(modalId, formId, message) {
+    formToSubmit = document.getElementById(formId);
+    document.getElementById('modalMessage').innerText = message;
+    document.getElementById('modalConfirmButton').onclick = function() {
+      if (formToSubmit) formToSubmit.submit();
+    };
+    document.getElementById(modalId).style.display = "block";
+  }
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+    formToSubmit = null;
+  }
+</script>
+
+{{> footer}}

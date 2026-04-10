@@ -1,0 +1,25 @@
+{
+    "name": "yoga-booking",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "seed": "node seed/seed.js",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    },
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "cookie-parser": "^1.4.6",
+        "dotenv": "^16.6.1",
+        "express": "^4.19.2",
+        "jsonwebtoken": "^9.0.3",
+        "mustache-express": "^1.3.2",
+        "nedb-promises": "^6.0.3"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "nodemon": "^3.1.0",
+        "supertest": "^7.0.0"
+    }
+}

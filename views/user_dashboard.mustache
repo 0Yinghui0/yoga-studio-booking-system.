@@ -1,0 +1,139 @@
+{{> head}}
+{{> header}}
+
+<div class="wrap" style="margin-top: 40px; margin-bottom: 50px;">
+  
+  <article class="card" style="padding: 40px;">
+
+  <a href="/courses" style="display: inline-block; margin-bottom: 20px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.95em; transition: color 0.2s ease;">
+      &larr; Browse More Courses
+    </a>
+
+{{#isOrganiser}}
+    <a href="/organiser" style="display: inline-block; margin-bottom: 20px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.95em; transition: color 0.2s ease;">
+      &larr; Back to Organiser Dashboard
+    </a>
+    {{/isOrganiser}}
+
+    <h1 style="margin-top: 0; color: var(--dark-blue);">My Dashboard</h1>
+    <p class="muted">Welcome back, {{user.name}}! Here are all your upcoming classes.</p>
+
+    <section style="margin-top: 30px;">
+      <h2 style="color: var(--dark-blue); font-size: 1.3em;">My Bookings</h2>
+      
+      <table class="table" style="width: 100%; margin-top: 15px;">
+        <thead>
+          <tr>
+            <th style="text-align: left;">Course / Class</th>
+            <th style="text-align: left;">Booking Type</th>
+            <th style="text-align: left;">Date</th>
+            <th style="text-align: left;">Status</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#bookings}}
+          <tr style="border-bottom: 1px solid var(--line);">
+            <td style="padding: 15px 5px; font-weight: bold; color: var(--dark-blue);">{{courseTitle}}</td>
+            <td style="padding: 15px 5px; white-space: nowrap;">
+              <span style="background-color: #f1f5f9; padding: 6px 12px; border-radius: 20px; font-size: 0.85em; color: var(--muted); border: 1px solid var(--line); display: inline-block;">{{type}}</span>
+            </td>
+            <td style="padding: 15px 5px;">{{date}}</td>
+            
+            <td style="padding: 15px 5px; font-weight: bold;">
+              <script>
+                (function() {
+                  var status = "{{status}}";
+                  if (status.includes("CANCELLED")) {
+                    document.write('<span style="color: #ef4444;">' + status + '</span>');
+                  } else {
+                    document.write('<span style="color: #16a34a;">' + status + '</span>');
+                  }
+                })();
+              </script>
+            </td>
+            
+            <td style="padding: 15px 5px; text-align: right;">
+              
+              <form id="cancelForm_{{_id}}" action="/bookings/cancel/{{_id}}" method="POST" style="margin: 0;">
+                <button type="button" class="btn" style="background-color: #ef4444; color: white; padding: 6px 12px; font-size: 0.85em;" onclick="openConfirmationModal('cancelModal', 'cancelForm_{{_id}}', 'Are you sure you want to cancel this booking? This cannot be undone.')">Cancel Booking</button>
+              </form>
+
+            </td>
+          </tr>
+          {{/bookings}}
+
+          {{^bookings}}
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 40px; background-color: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; color: var(--muted);">
+              You haven't booked any classes yet. <br>
+              <a href="/courses" class="btn primary" style="margin-top: 15px; display: inline-block;">Browse Courses</a>
+            </td>
+          </tr>
+          {{/bookings}}
+        </tbody>
+      </table>
+    </section>
+
+  </article>
+</div>
+
+<style>
+  .custom-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.6); }
+  .custom-modal-content { background-color: var(--card-bg); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 420px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid var(--line); }
+  .custom-modal-header { background-color: #fee2e2; color: #b91c1c; padding: 15px 20px; font-weight: bold; font-size: 1.1em; border-bottom: 1px solid #fecaca; }
+  .custom-modal-body { padding: 25px 20px; color: var(--ink); line-height: 1.6; text-align: center; font-size: 1.05em; }
+  .custom-modal-footer { padding: 15px 20px; background-color: #f8fafc; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 12px; }
+</style>
+
+<div id="cancelModal" class="custom-modal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      Cancel Booking
+    </div>
+    <div class="custom-modal-body">
+      <p id="modalMessage" style="margin: 0;">Are you sure?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="btn" style="background-color: #64748b; color: white;" onclick="closeModal('cancelModal')">Keep Booking</button>
+      <button type="button" class="btn primary" style="background-color: #ef4444;" id="modalConfirmButton">Cancel It</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let formToSubmit = null;
+  function openConfirmationModal(modalId, formId, message) {
+    formToSubmit = document.getElementById(formId);
+    document.getElementById('modalMessage').innerText = message;
+    document.getElementById('modalConfirmButton').onclick = function() {
+      if (formToSubmit) formToSubmit.submit();
+    };
+    document.getElementById(modalId).style.display = "block";
+  }
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+    formToSubmit = null;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('tr').forEach(row => {
+      if (row.innerText.includes('CANCELLED')) {
+        const actionForm = row.querySelector('form');
+        if (actionForm) {
+          const btn = actionForm.querySelector('button');
+          if (btn) {
+            btn.innerText = "Clear History";
+            btn.style.backgroundColor = "#94a3b8"; // Nice neutral gray
+            btn.onclick = function(e) {
+              e.preventDefault();
+              openConfirmationModal('cancelModal', actionForm.id, 'Remove this cancelled class from your history permanently?');
+            };
+          }
+        }
+      }
+    });
+  });
+</script>
+
+{{> footer}}

@@ -1,0 +1,59 @@
+<header class="site-header">
+  <a href="/" class="brand">Yoga Studio</a>
+
+  <nav>
+    <a href="/courses">Courses</a>
+    
+    {{#user}}
+      <span style="color: var(--muted); font-weight: 600;">Signed in as: {{user.name}}</span>
+      
+      {{#isOrganiser}}
+        <a href="/organiser">Staff Dashboard</a>
+      {{/isOrganiser}}
+
+      {{^isOrganiser}}
+        <a href="/bookings/dashboard">My Dashboard</a>
+      {{/isOrganiser}}
+
+      <a href="#" onclick="openLogoutModal(event)" style="color: #ef4444; font-weight: bold; text-decoration: none;">Logout</a>
+
+    {{/user}}
+
+    {{^user}}
+      <a href="/auth/login">Login</a>
+    {{/user}}
+  </nav>
+</header>
+
+<style>
+  .custom-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.6); }
+  .custom-modal-content { background-color: var(--card-bg, #fff); position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 420px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; border: 1px solid var(--line, #e2e8f0); }
+  .custom-modal-header { background-color: #fee2e2; color: #b91c1c; padding: 15px 20px; font-weight: bold; font-size: 1.1em; border-bottom: 1px solid #fecaca; }
+  .custom-modal-body { padding: 25px 20px; color: var(--ink, #333); line-height: 1.6; text-align: center; font-size: 1.05em; }
+  .custom-modal-footer { padding: 15px 20px; background-color: #f8fafc; border-top: 1px solid var(--line, #e2e8f0); display: flex; justify-content: flex-end; gap: 12px; }
+</style>
+
+<div id="logoutModal" class="custom-modal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      Sign Out
+    </div>
+    <div class="custom-modal-body">
+      <p style="margin: 0;">Are you sure you want to log out?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="btn" style="background-color: #64748b; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;" onclick="closeLogoutModal()">Cancel</button>
+      <a href="/auth/logout" class="btn primary" style="background-color: #ef4444; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">Logout</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openLogoutModal(e) {
+    e.preventDefault(); 
+    document.getElementById('logoutModal').style.display = "block";
+  }
+  function closeLogoutModal() {
+    document.getElementById('logoutModal').style.display = "none";
+  }
+</script>

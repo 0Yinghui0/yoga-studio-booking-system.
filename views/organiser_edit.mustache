@@ -1,0 +1,245 @@
+{{> head}}
+{{> header}}
+
+<div class="wrap" style="margin-top: 40px; margin-bottom: 50px;">
+  <article class="card" style="margin: 40px auto; padding: 40px;">
+    
+    <a href="/organiser" style="display: inline-block; margin-bottom: 20px; color: #64748b; text-decoration: none; font-weight: 600; font-size: 0.95em; transition: color 0.2s ease;" onmouseover="this.style.color='var(--dark-blue)'" onmouseout="this.style.color='#64748b'">
+      &larr; Back to Dashboard
+    </a>
+
+    <h2 style="margin-top: 0; color: var(--dark-blue);">Edit Course: {{course.title}}</h2>
+    
+    <form id="editCourseForm" action="/organiser/edit/{{course._id}}" method="POST">
+      <div style="margin-bottom: 15px;">
+        <label style="color: var(--muted); font-weight: 600;">Title:</label><br>
+        <input type="text" name="title" value="{{course.title}}" required style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">
+      </div>
+      
+      <div style="margin-bottom: 15px;">
+        <label style="color: var(--muted); font-weight: 600;">Level:</label><br>
+        <select name="level" style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+        <small class="muted">Current level: {{course.level}}</small>
+      </div>
+
+        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+        <div style="flex: 1;">
+          <label style="color: var(--muted); font-weight: 600;">Start Date:</label>
+          <input type="date" name="startDate" value="{{course.startDate}}" required>
+        </div>
+
+        <div style="flex: 1;">
+          <label style="color: var(--muted); font-weight: 600;">End Date:</label>
+          <input type="date" name="endDate" value="{{course.endDate}}" required>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="color: var(--muted); font-weight: 600;">Description:</label><br>
+        <textarea name="description" required rows="4" style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">{{course.description}}</textarea>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="color: var(--muted); font-weight: 600;">Location:</label><br>
+        <input type="text" name="location" value="{{course.location}}" required style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">
+      </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="color: var(--muted); font-weight: 600;">Course Price (£):</label><br>
+        <input type="number" name="price" value="{{course.price}}" required min="0" step="0.01" style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button type="button" class="btn primary" onclick="openConfirmationModal('saveChangesModal', 'editCourseForm', 'Are you sure you want to save these changes to the course?')">Save Changes</button>
+        <a href="/organiser" class="btn" style="background-color: #f1f5f9; color: #ef4444 !important; margin-left: 10px; padding: 10px 20px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">Cancel</a>
+      </div>
+    </form>
+
+
+    <section style="margin-top: 40px;">
+      <h2 style="color: var(--dark-blue); font-size: 1.3em;">Manage Existing Sessions</h2>
+      
+      <table class="table" style="width: 100%; margin-top: 15px;">
+        <thead>
+          <tr>
+            <th style="text-align: left;">Start Date & Time</th>
+            <th style="text-align: left;">End Date & Time</th>
+            <th style="text-align: left;">Cap.</th>
+            <th style="text-align: left;">Price (£)</th>
+            <th style="text-align: left;">Booked</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#sessions}}
+          <tr style="border-bottom: 1px solid var(--line);">
+            <td style="padding: 10px 5px;">
+              <form id="update_session_{{_id}}" action="/organiser/session/edit/{{_id}}" method="POST" style="margin: 0; display: contents;">
+                <input type="hidden" name="courseId" value="{{courseId}}">
+                <input type="datetime-local" name="startDateTime" value="{{startDateTime}}" required style="padding: 6px; border: 1px solid var(--line); border-radius: 4px; width: 100%; font-size: 0.85em;">
+            </td>
+            <td style="padding: 10px 5px;">
+                <input type="datetime-local" name="endDateTime" value="{{endDateTime}}" required style="padding: 6px; border: 1px solid var(--line); border-radius: 4px; width: 100%; font-size: 0.85em;">
+            </td>
+            <td style="padding: 10px 5px;">
+                <input type="number" name="capacity" value="{{capacity}}" required style="padding: 6px; border: 1px solid var(--line); border-radius: 4px; width: 60px; font-size: 0.85em;">
+            </td>
+            <td style="padding: 10px 5px;">
+                <input type="number" name="price" value="{{price}}" required step="0.01" style="padding: 6px; border: 1px solid var(--line); border-radius: 4px; width: 70px; font-size: 0.85em;">
+            </td>
+            <td style="padding: 10px 5px; color: var(--muted);">{{booked}}</td>
+            <td style="padding: 10px 5px; text-align: right; white-space: nowrap;">
+                <button type="button" class="btn primary" style="padding: 6px 12px; font-size: 0.85em;" onclick="openConfirmationModal('saveChangesModal', 'update_session_{{_id}}', 'Save changes to this specific session?')">Save</button>
+              </form>
+
+              <form id="delete_session_{{_id}}" action="/organiser/session/delete/{{_id}}" method="POST" style="display: inline; margin-left: 5px;">
+                <button type="button" class="btn" style="background-color: #ef4444; color: white; padding: 6px 12px; font-size: 0.85em;" onclick="openConfirmationModal('saveChangesModal', 'delete_session_{{_id}}', 'Are you sure you want to permanently delete this session?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {{/sessions}}
+
+          {{^sessions}}
+          <tr>
+            <td colspan="5" class="muted" style="text-align: center; padding: 20px;">No sessions created yet. Add one below!</td>
+          </tr>
+          {{/sessions}}
+        </tbody>
+      </table>
+    </section>
+
+    <hr style="margin: 40px 0; border: none; border-top: 1px solid var(--line);">
+
+    <section>
+      <h2 style="margin-top: 0; color: var(--dark-blue); font-size: 1.3em;">Add a New Session</h2>
+      <p class="muted">Create individual classes/lessons for this course.</p>
+      
+      <form id="addSessionForm" action="/organiser/edit/{{course._id}}/session" method="POST" class="filters" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; background-color: var(--light-blue); padding: 20px; border-radius: 8px;">
+        <label style="flex: 1; min-width: 180px;">
+          <strong style="color: var(--muted); font-size: 0.9em;">Start Date & Time:</strong>
+          <input type="datetime-local" name="startDateTime" required style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">
+        </label>
+
+        <label style="flex: 1; min-width: 180px;">
+          <strong style="color: var(--muted); font-size: 0.9em;">End Date & Time:</strong>
+          <input type="datetime-local" name="endDateTime" required style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">
+        </label>
+
+        <label style="width: 100px;">
+          <strong style="color: var(--muted); font-size: 0.9em;">Capacity:</strong>
+          <input type="number" name="capacity" value="20" min="1" required style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">
+        </label>
+
+        <label style="width: 100px;">
+          <strong style="color: var(--muted); font-size: 0.9em;">Price (£):</strong>
+          <input type="number" name="price" value="10.00" min="0" step="0.01" required style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px;">
+        </label>
+
+        <button type="button" class="btn primary" style="padding: 10px 15px; margin-top: auto;" onclick="openConfirmationModal('saveChangesModal', 'addSessionForm', 'Are you sure you want to add this new session?')">Add Session</button>
+      </form>
+    </section>
+
+  </article>
+</div>
+
+<style>
+  .custom-modal {
+    display: none; 
+    position: fixed; 
+    z-index: 9999; 
+    left: 0;
+    top: 0;
+    width: 100vw; 
+    height: 100vh; 
+    background-color: rgba(0,0,0,0.6); 
+  }
+
+  .custom-modal-content {
+    background-color: var(--card-bg);
+    position: fixed; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 420px; 
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+    overflow: hidden; 
+    border: 1px solid var(--line);
+  }
+
+  .custom-modal-header {
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+    padding: 15px 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+    border-bottom: 1px solid rgba(13, 71, 161, 0.1);
+  }
+
+  .custom-modal-body {
+    padding: 25px 20px;
+    color: var(--ink);
+    line-height: 1.6;
+    text-align: center;
+    font-size: 1.05em;
+  }
+
+  .custom-modal-footer {
+    padding: 15px 20px;
+    background-color: #f8fafc;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+</style>
+
+<div id="saveChangesModal" class="custom-modal">
+  <div class="custom-modal-content">
+    <div class="custom-modal-header">
+      Action confirmation
+    </div>
+    <div class="custom-modal-body">
+      <p id="modalMessage" style="margin: 0;">Are you sure you want to continue?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="btn" style="background-color: #64748b;" onclick="closeModal('saveChangesModal')">Cancel</button>
+      <button type="button" class="btn primary" style="background-color: var(--dark-blue);" id="modalConfirmButton">Continue</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let formToSubmit = null;
+
+  function openConfirmationModal(modalId, formId, message) {
+    formToSubmit = document.getElementById(formId);
+
+    if (!formToSubmit.checkValidity()) {
+      formToSubmit.reportValidity(); 
+      return; 
+    }
+
+    document.getElementById('modalMessage').innerText = message;
+    
+    document.getElementById('modalConfirmButton').onclick = function() {
+      if (formToSubmit) {
+        formToSubmit.submit();
+      }
+    };
+    
+    document.getElementById(modalId).style.display = "block";
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+    formToSubmit = null;
+  }
+</script>
+
+{{> footer}}

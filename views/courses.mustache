@@ -1,0 +1,79 @@
+{{> head}}
+{{> header}}
+
+<div class="wrap" style="margin-top: 40px; margin-bottom: 50px;">
+  
+  <section class="filters">
+    <form action="/courses" method="GET" style="display: flex; justify-content: center; align-items: flex-end; flex-wrap: wrap; gap: 20px; width: 100%;">
+      
+      <label style="display: flex; flex-direction: column; text-align: left; font-weight: 600; color: var(--dark-blue); font-size: 0.9em;">
+        Level:
+        <select name="level" style="width: 250px; margin-top: 5px;">
+          <option value="" {{^filters.level}}selected{{/filters.level}}>Any</option>
+          <option value="beginner" {{#filters}}{{#level}}{{#isBeginner}}selected{{/isBeginner}}{{/level}}{{/filters}}>Beginner</option>
+          <option value="intermediate" {{#filters}}{{#level}}{{#isIntermediate}}selected{{/isIntermediate}}{{/level}}{{/filters}}>Intermediate</option>
+          <option value="advanced" {{#filters}}{{#level}}{{#isAdvanced}}selected{{/isAdvanced}}{{/level}}{{/filters}}>Advanced</option>
+        </select>
+      </label>
+
+      <label style="display: flex; flex-direction: column; text-align: left; font-weight: 600; color: var(--dark-blue); font-size: 0.9em;">
+        Search:
+        <input type="search" name="q" value="{{filters.q}}" placeholder="Title or description" style="width: 250px; margin-top: 5px;" />
+      </label>
+
+      <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <button class="btn btn-primary" type="submit" style="margin: 0;">Apply</button>
+        <a href="/courses" class="btn" style="background-color: #64748b; margin: 0; display: flex; align-items: center; justify-content: center;">Reset</a>
+      </div>
+
+    </form>
+  </section>
+
+<section class="course-list">
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 40px; margin-top: 40px;">
+      
+      {{#courses}}
+      <article class="card" style="padding: 30px; border-radius: 12px; display: flex; flex-direction: column; height: 100%; border: 1px solid #e2e8f0; transition: transform 0.2s ease, box-shadow 0.2s ease; background-color: white;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.08)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+        
+        <h2 style="margin-top: 0; color: var(--dark-blue); font-size: 1.6em; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">{{title}}</h2>
+        
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+          <span style="background: #f8fafc; color: #475569; padding: 6px 14px; border-radius: 20px; font-size: 0.9em; font-weight: 600; text-transform: capitalize; border: 1px solid #e2e8f0;">Level: {{level}}</span>
+          {{#allowDropIn}}
+            <span style="background: #d1fae5; color: #047857; padding: 6px 14px; border-radius: 20px; font-size: 0.9em; font-weight: 600; border: 1px solid #a7f3d0;">Drop-in OK</span>
+          {{/allowDropIn}}
+        </div>
+
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #f1f5f9; flex-grow: 1;">
+          <p style="margin: 0 0 8px 0; font-size: 0.95em; color: var(--ink);">
+            <strong style="color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85em; display: block; margin-bottom: 2px;">Course Dates</strong> 
+            {{startDate}} – {{endDate}}
+          </p>
+          <p style="margin: 0 0 8px 0; font-size: 0.95em; color: var(--ink);">
+            <strong style="color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85em; display: block; margin-bottom: 2px;">Next Session</strong> 
+            {{nextSession}}
+          </p>
+          <p style="margin: 0; font-size: 0.95em; color: var(--ink);">
+            <strong style="color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85em; display: inline;">Total Sessions:</strong> 
+            {{sessionsCount}}
+          </p>
+        </div>
+
+        <a href="/courses/{{id}}" class="btn primary" style="width: 100%; text-align: center; padding: 15px; font-size: 1.1em; font-weight: bold; border-radius: 8px; background-color: var(--dark-blue);">View Details & Book</a>
+        
+      </article>
+      {{/courses}}
+
+      {{^courses}}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background-color: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+          <h3 style="color: var(--dark-blue); font-size: 1.5em; margin-bottom: 10px;">No Courses Found</h3>
+          <p style="color: var(--muted); font-size: 1.1em;">No courses match your filters. Try hitting Reset!</p>
+        </div>
+      {{/courses}}
+
+    </div>
+  </section>
+
+</div>
+
+{{> footer}}

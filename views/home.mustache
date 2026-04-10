@@ -1,0 +1,61 @@
+{{> head}}
+{{> header}}
+
+<div class="wrap" style="margin-top: 50px; margin-bottom: 60px;">
+  
+  <div style="text-align: center; padding: 70px 20px; background-color: var(--card-bg); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--line); margin-bottom: 50px;">
+    
+    <h1 style="font-size: 2.8em; color: var(--dark-blue); margin-bottom: 20px; letter-spacing: -1px;">Welcome to the Yoga &amp; Mindfulness Studio</h1>
+    
+    <p style="font-size: 1.25em; color: var(--muted); max-width: 800px; margin: 0 auto 40px auto; line-height: 1.6;">
+      We run a range of classes and weekend workshops for users of different levels of fitness and ability. Whether you are looking for a block of weekly sessions or an intensive weekend workshop, our expert instructors are here to guide your practice.
+    </p>
+    
+    <a href="/courses" class="btn primary" style="font-size: 1.15em; padding: 16px 40px; border-radius: 30px; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);">View Our Classes</a>
+    
+  </div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 40px; margin-top: 20px;">
+    
+    {{#courses}}
+    <article class="card" style="padding: 30px; border-radius: 12px; display: flex; flex-direction: column; height: 100%; border: 1px solid #e2e8f0; transition: transform 0.2s ease, box-shadow 0.2s ease; background-color: white;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.08)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+      
+      <h2 style="margin-top: 0; color: var(--dark-blue); font-size: 1.6em; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px;">{{title}}</h2>
+      
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+        <span style="background: #f8fafc; color: #475569; padding: 6px 14px; border-radius: 20px; font-size: 0.9em; font-weight: 600; text-transform: capitalize; border: 1px solid #e2e8f0;">Level: {{level}}</span>
+        {{#allowDropIn}}
+          <span style="background: #d1fae5; color: #047857; padding: 6px 14px; border-radius: 20px; font-size: 0.9em; font-weight: 600; border: 1px solid #a7f3d0;">Drop-in OK</span>
+        {{/allowDropIn}}
+      </div>
+
+      <p style="color: var(--ink); font-size: 1.05em; line-height: 1.6; flex-grow: 1; margin-bottom: 25px;">{{description}}</p>
+
+      <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #f1f5f9;">
+        <p style="margin: 0 0 8px 0; font-size: 0.95em; color: var(--ink);">
+          <strong style="color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85em; display: block; margin-bottom: 2px;">Course Dates</strong> 
+          {{startDate}} – {{endDate}}
+        </p>
+        <p style="margin: 0; font-size: 0.95em; color: var(--ink);">
+          <strong style="color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85em; display: block; margin-bottom: 2px;">Next Session</strong> 
+          {{nextSession}}
+        </p>
+      </div>
+
+      <a href="/courses/{{id}}" class="btn primary" style="width: 100%; text-align: center; padding: 15px; font-size: 1.1em; font-weight: bold; border-radius: 8px; background-color: var(--dark-blue);">View Details & Book</a>
+      
+    </article>
+    {{/courses}}
+
+    {{^courses}}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background-color: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+        <h3 style="color: var(--dark-blue); font-size: 1.5em; margin-bottom: 10px;">No Courses Scheduled</h3>
+        <p style="color: var(--muted); font-size: 1.1em;">Check back soon for new class announcements!</p>
+      </div>
+    {{/courses}}
+
+  </div>
+
+</div>
+
+{{> footer}}
